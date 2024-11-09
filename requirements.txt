@@ -10,3 +10,4 @@ Jinja2==3.1.4
 MarkupSafe==3.0.2
 packaging==24.2
 Werkzeug==3.0.6
+SQLAlchemy==2.0.36
