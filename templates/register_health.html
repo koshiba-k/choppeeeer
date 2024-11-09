@@ -1,0 +1,161 @@
+<!-- templates/register_health.html -->
+{% extends "base.html" %}
+
+{% block title %}体調登録{% endblock %}
+
+{% block header %}
+    <h1>体調登録</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form id="healthForm" action="{{ url_for('health_result') }}" method="POST">
+        <!-- 体温入力 (電卓形式) -->
+        <div class="temperature-input">
+            <label for="temperature">体温:</label>
+            <input type="text" id="temperature" name="temperature" size="5" readonly>
+
+            <div class="keypad">
+                <button type="button" onclick="addNumber('1')">1</button>
+                <button type="button" onclick="addNumber('2')">2</button>
+                <button type="button" onclick="addNumber('3')">3</button>
+                <button type="button" onclick="addNumber('4')">4</button>
+                <button type="button" onclick="addNumber('5')">5</button>
+                <button type="button" onclick="addNumber('6')">6</button>
+                <button type="button" onclick="addNumber('7')">7</button>
+                <button type="button" onclick="addNumber('8')">8</button>
+                <button type="button" onclick="addNumber('9')">9</button>
+                <button type="button" onclick="addNumber('.')">.</button>
+                <button type="button" onclick="addNumber('0')">0</button>
+                <button type="button" onclick="clearInput()">クリア</button>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- のど、熱、咳、だるさのラジオボタン -->
+        <!-- ラジオボタン -->
+        <!-- templates/register_health.html -->
+
+        <fieldset class="radio-2">
+            <legend>のど:</legend>
+            <label><input type="radio" name="throat" value="normal" checked/>正常</label>
+            <label><input type="radio" name="throat" value="sore"/>痛い</label>
+        </fieldset>
+
+        <fieldset class="radio-2">
+            <legend>熱:</legend>
+            <label><input type="radio" name="fever" value="normal" checked/>正常</label>
+            <label><input type="radio" name="fever" value="high"/>高い</label>
+        </fieldset>
+
+        <fieldset class="radio-2">
+            <legend>咳:</legend>
+            <label><input type="radio" name="cough" value="no" checked/>ない</label>
+            <label><input type="radio" name="cough" value="yes"/>ある</label>
+        </fieldset>
+    
+        <div class="body-map">
+            <img src="{{ url_for('static', filename='images/body_front.png') }}" alt="人体模型" style="width: 100%;">
+            <!-- クリック可能な部位を設定 -->
+            <div class="body-part" data-part="頭" style="border-radius: 50%;top: 23%; left: 40%; width: 20%; height: 20%;"></div>
+            <div class="body-part" data-part="胸" style="border-radius: 14% 14% 0% 0%;top: 43%; left: 40%; width: 20%; height: 10%;"></div>
+            <div class="body-part" data-part="腹" style="top: 55%; left: 40%; width: 20%; height: 10%;"></div>
+            
+            <div class="body-part" data-part="右肩" style="border-radius: 120% 14% 0% 0%;top: 43%; left: 35%; width: 7%; height: 10%;"></div>
+            <div class="body-part" data-part="右腕" style="border-radius: 100% 14% 120% 0%;top: 50%; left: 35%; width: 7%; height: 11%;"></div>
+            <div class="body-part" data-part="右手" style="border-radius: 50%;top: 56%; left: 35%; width: 4%; height: 5%;"></div>
+            <div class="body-part" data-part="右足" style="border-radius:0% 0% 110% 0%;top: 65%; left: 40%; width: 10%; height: 11%;"></div>
+
+            <div class="body-part" data-part="左肩" style="border-radius: 0% 120% 0% 0%;top: 43%; left: 57%; width: 7%; height: 10%;"></div>
+            <div class="body-part" data-part="左腕" style="border-radius: 14% 70% 0% 150%;top: 50%; left: 58%; width: 7%; height: 8%;"></div>
+            <div class="body-part" data-part="左手" style="border-radius: 50%;top: 56%; left: 61%; width: 4%; height: 5%;"></div>
+            <div class="body-part" data-part="左足" style="border-radius:0% 0% 0% 110%;top: 65%; left: 50%; width: 10%; height: 11%;"></div>
+        </div>
+        
+        <ul id="selectedPartsList"></ul>
+            <input type="hidden" id="selectedParts" name="selectedParts" style="text-align: center; font-weight: bold; color: red;">
+        
+        <div class="submit">
+            <button type="submit">登録</button>
+        </div>
+        <div class="button-group">
+            <a class="btn btn-secondary" href="{{ url_for('index') }}">ホームに戻る</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 電卓形式の体温入力
+    function addNumber(num) {
+        document.getElementById('temperature').value += num;
+    }
+    function clearInput() {
+        document.getElementById('temperature').value = '';
+    }
+    // クリックされた部位を記録
+    
+    const selectedParts = [];
+
+    document.querySelectorAll('.body-part').forEach(part => {
+        part.addEventListener('click', () => {
+            const bodyPart = part.getAttribute('data-part');
+            
+            // 部位が既にリストに存在するかチェック
+            if (!selectedParts.includes(bodyPart)) {
+                selectedParts.push(bodyPart);
+                updateSelectedPartsList();
+            }
+        });
+    });
+
+    // 選択された部位のリストを更新
+    function updateSelectedPartsList() {
+        const list = document.getElementById('selectedPartsList');
+        list.innerHTML = ''; // リストをクリア
+
+        selectedParts.forEach((part, index) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${part} - 悪いと判断しました`;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '削除';
+            deleteButton.onclick = () => {
+                selectedParts.splice(index, 1); // 部位リストから削除
+                updateSelectedPartsList();
+            };
+
+            listItem.appendChild(deleteButton);
+            list.appendChild(listItem);
+        });
+
+        // 隠しフィールドに選択された部位をJSONとして設定
+        document.getElementById('selectedParts').value = JSON.stringify(selectedParts);
+    }
+</script>
+        <style>
+            .body-map {
+                position: relative;
+                max-width: 300px;
+                margin: 20px auto;
+            }
+            .body-part {
+                position: absolute;
+                cursor: pointer;
+                opacity: 0.5;
+            }
+            .body-part:hover {
+                opacity: 0.8;
+            }
+        </style>
+    </form>
+</div>
+{% endblock %}

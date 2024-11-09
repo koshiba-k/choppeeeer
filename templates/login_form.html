@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>体調管理システム</h1>
+        <h2>Choppeeeer</h2>
+        <hr>
+        <h2>ログイン</h2>
+        {% from "_formhelpers.html" import render_field %}
+        <form method="POST" action="{{ url_for('login') }}" novalidate>
+            {{ form.hidden_tag() }}
+            {{ render_field(form.employee_number, class='form-control') }}
+            {{ render_field(form.password, class='form-control', id='password', autocomplete="off") }}
+            
+            <div class="form-group">
+                <label><input type="checkbox" id="show_password" onclick="togglePasswordVisibility()"> パスワードを表示</label>
+            </div>
+            
+            <!-- フラッシュメッセージ -->
+            {% for message in get_flashed_messages() %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+            
+            <br>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            passwordField.type = document.getElementById('show_password').checked ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>

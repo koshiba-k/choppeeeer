@@ -1,0 +1,60 @@
+<!-- templates/admin.html -->
+{% extends "base.html" %}
+{% block title %}管理者ページ{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4 text-center">管理者ダッシュボード</h1>
+
+    <!-- Dashboard cards -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-eye"></i> 社員閲覧
+                    </h3>
+                    <p class="card-text">登録済みの社員情報を一覧で確認できます。</p>
+                    <a href="{{ url_for('view_employee') }}" class="btn btn-primary">社員閲覧</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-plus"></i> 社員登録
+                    </h3>
+                    <p class="card-text">新しい社員を登録してチームを拡大しましょう。</p>
+                    <a href="{{ url_for('add_employee') }}" class="btn btn-success">社員登録</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-minus"></i> 社員削除
+                    </h3>
+                    <p class="card-text">不要な社員情報を削除してデータを整理します。</p>
+                    <a href="{{ url_for('delete_employee') }}" class="btn btn-danger">社員削除</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick statistics -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="alert alert-success text-center">
+                <strong>総社員数:</strong> {{ total_employees }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-warning text-center">
+                <strong>管理者:</strong> {{ total_admins }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

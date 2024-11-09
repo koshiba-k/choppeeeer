@@ -1,0 +1,33 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>{% block title %}My App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('index') }}">MYページ</a></li>
+                {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('admin') }}">管理者画面</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('logout') }}">ログアウト</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">ログイン</a></li>
+                <li><a href="{{ url_for('register') }}">サインアップ</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% block header %}
+        
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
